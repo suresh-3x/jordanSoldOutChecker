@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"jordanSoldOutChecker/internal/notify"
 )
@@ -46,31 +45,27 @@ func main() {
 		return
 	}
 
-	for {
-		// Fetch the webpage
-		response, err := http.Get(config.URL)
-		if err != nil {
-			fmt.Printf("Error fetching URL: %v\n", err)
-			return
-		}
-		defer response.Body.Close()
-
-		// Read the response body
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			fmt.Printf("Error reading response body: %v\n", err)
-			return
-		}
-
-		// Check if the webpage contains the specified text
-		if strings.Contains(string(body), config.SearchText) {
-			fmt.Printf("The webpage contains '%s'\n", config.SearchText)
-			notify.SendNotification(config.SearchText)
-		} else {
-			fmt.Printf("The webpage does not contain '%s'\n", config.SearchText)
-		}
-
-		// Sleep for the specified interval before checking again
-		time.Sleep(time.Duration(config.CheckInterval) * time.Second)
+	// Fetch the webpage
+	response, err := http.Get(config.URL)
+	if err != nil {
+		fmt.Printf("Error fetching URL: %v\n", err)
+		return
 	}
+	defer response.Body.Close()
+
+	// Read the response body
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return
+	}
+
+	// Check if the webpage contains the specified text
+	if strings.Contains(string(body), config.SearchText) {
+		fmt.Printf("The webpage contains '%s'\n", config.SearchText)
+		notify.SendNotification(config.SearchText)
+	} else {
+		fmt.Printf("The webpage does not contain '%s'\n", config.SearchText)
+	}
+
 }
